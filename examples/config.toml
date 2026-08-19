@@ -1,0 +1,57 @@
+# ~/.config/aeroapp-launcher/config.toml
+#
+# Every installed app is searchable and launchable without any of this. The file
+# is a policy overlay: what to do when an app already has windows on another
+# workspace, which apps get a hotkey of their own, and extra names to find them by.
+# Unknown keys are errors, and the file is re-read whenever it changes.
+
+# The chord that opens the launcher. AeroSpace key names: alt, ctrl, cmd, shift,
+# then a-z, 0-9, space, enter, esc, tab, f1-f20, minus, equal, comma, period, ...
+hotkey = "alt-space"
+
+# Where the aerospace CLI lives (default shown).
+# aerospace = "/opt/homebrew/bin/aerospace"
+
+# Directories to search for apps besides /Applications, ~/Applications and the
+# system folders. Each is searched one level deep as well.
+# extra_app_dirs = ["/Applications/Setapp"]
+
+# What to do for apps that have their own entry below neither here nor built in.
+# new_window is the trigger used when the app already has a window elsewhere:
+#   "open"          open -n -g: a new instance, not brought to the front. Browsers
+#                   and editors hand it to the running copy, which opens a window.
+#   "applescript"   tell application id "<bundle-id>" to make new window
+#   ["zed", "-n"]   run a command; bare names are looked up in PATH and Homebrew
+#   "focus"         give up and focus the existing window, jumping to its workspace
+[defaults]
+new_window = "open"
+
+# Apps you want exactly one of. Summoning Slack from a workspace it is not on
+# moves its window to you instead of opening a second one.
+[apps."com.tinyspeck.slackmacgap"]
+follow = true
+hotkey = "ctrl-alt-s"
+
+[apps."com.hnc.Discord"]
+follow = true
+
+# Editors and terminals with a CLI that opens a new window.
+[apps."dev.zed.Zed"]
+new_window = ["zed", "-n"]
+hotkey = "ctrl-alt-z"
+
+[apps."com.microsoft.VSCode"]
+new_window = ["code", "-n"]
+
+# Scriptable apps. Chrome and Safari answer `make new window` / `make new document`.
+[apps."com.google.Chrome"]
+new_window = "applescript"
+aliases = ["browser"]
+
+[apps."com.apple.Safari"]
+new_window = { applescript = 'tell application "Safari" to make new document' }
+
+# Finder has a built-in rule already (`make new Finder window`); an entry here
+# would override it.
+# [apps."com.apple.finder"]
+# new_window = { applescript = 'tell application "Finder" to make new Finder window' }

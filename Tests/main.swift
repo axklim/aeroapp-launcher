@@ -1,0 +1,7 @@
+runTOMLTests()
+runHotkeyTests()
+runConfigTests()
+runSummonTests()
+runMatcherTests()
+runAppIndexTests()
+Harness.finish()
