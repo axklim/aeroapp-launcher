@@ -18,8 +18,8 @@ axklim/aerotab and built the same way. User docs live in `docs/`, not here.
 ## Commands
 
 ```sh
-./test.sh                                   # all unit tests
-./build.sh dist                             # dist/AeroAppLauncher.app (gitignored)
+make test                                   # = ./test.sh, all unit tests
+make build                                  # = ./build.sh dist (gitignored)
 XDG_CONFIG_HOME=/tmp/x dist/AeroAppLauncher.app/Contents/MacOS/AeroAppLauncher   # daemon
 dist/AeroAppLauncher.app/Contents/MacOS/AeroAppLauncher summon Safari            # CLI
 ```

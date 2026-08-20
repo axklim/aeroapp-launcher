@@ -25,6 +25,9 @@ $BIN                                 # the daemon, logging to the terminal
 $BIN summon Zed                      # the CLI
 ```
 
+The Makefile wraps the same scripts: `make test`, `make build`, `make run`
+(foreground daemon), `make install` (into `~/Applications`), `make clean`.
+
 `build.sh` generates `Version.swift` (`let appVersion = "..."`) into a temp dir
 from `AEROAPP_LAUNCHER_VERSION`, so compiling `Sources/App` by hand needs that
 one-liner supplied too.
