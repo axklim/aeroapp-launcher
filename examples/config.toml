@@ -35,9 +35,9 @@ hotkey = "ctrl-alt-s"
 [apps."com.hnc.Discord"]
 follow = true
 
-# Editors and terminals with a CLI that opens a new window.
+# Editors and terminals with a CLI that opens a new window. (Zed has this rule
+# built in; the entry here only adds the hotkey.)
 [apps."dev.zed.Zed"]
-new_window = ["zed", "-n"]
 hotkey = "ctrl-alt-z"
 
 [apps."com.microsoft.VSCode"]

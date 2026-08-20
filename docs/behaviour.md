@@ -25,9 +25,11 @@ and then follows the table in the README. Every window operation goes through th
   has no sticky windows, so while you sit on B with Slack on A, Slack is not
   visible until you ask for it.
 - **Windows only elsewhere, default** — run the app's new-window trigger, then wait
-  for a window of the app to appear on the focused workspace (up to eight seconds)
-  and focus it, since `open -g` by design and the other triggers by app whim leave
-  the new window unfocused.
+  for a new window of the app to appear anywhere (up to eight seconds) and focus
+  it, since `open -g` by design and the other triggers by app whim leave the new
+  window unfocused. A window that appears on another workspace is moved here
+  first. If nothing appears — a single-instance app silently ignoring `open -n` —
+  the existing window is focused instead, the way the Dock would have.
 
 ## New-window triggers
 
@@ -47,8 +49,11 @@ per-app (`new_window` in the config). From most to least generic:
 - `"focus"` — give up and focus the existing window, jumping to its workspace the
   way Raycast would.
 
-Finder has a built-in rule (`make new Finder window`), because `open -n` on Finder
-starts a second Finder. An entry of your own for Finder overrides it.
+Two built-in rules cover apps where the default is known not to work: Finder uses
+`make new Finder window` (`open -n` starts a second Finder), and Zed uses
+`zed -n` (Zed is single-instance and ignores `open -n`; without the `zed` CLI on
+PATH the trigger fails visibly and the existing window is focused). Your own
+entry for either app overrides the built-in.
 
 ## Search and ranking
 
@@ -68,7 +73,8 @@ The launcher degrades toward what the Dock would have done:
   workspace. Better than a dead key.
 - **New-window trigger fails** (AppleScript error, command not found) — the
   existing window is focused instead, jump and all; the reason is logged.
-- **No window appears after a trigger** — logged after eight seconds; nothing else.
+- **No window appears after a trigger** — after eight seconds the existing window
+  is focused instead; the wait and the fallback are logged.
 - **Config file broken** — previous settings stay in effect; the error is logged
   with a line number.
 - **Hotkey taken** — logged and skipped; the rest are still registered. Two apps

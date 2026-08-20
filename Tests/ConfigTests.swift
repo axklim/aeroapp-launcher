@@ -65,6 +65,9 @@ func runConfigTests() {
 
         let overridden = try Config.parse(toml: "[apps.\"com.apple.finder\"]\nnew_window = \"open\"\n")
         expectEqual(overridden.policy(for: "com.apple.finder").newWindow, .open, "the user's own entry wins")
+
+        expectEqual(plain.policy(for: "dev.zed.Zed").newWindow, .command(["zed", "-n"]),
+                    "Zed is single-instance; open -n does nothing")
     }
 
     test("Config: errors name the offending key") {

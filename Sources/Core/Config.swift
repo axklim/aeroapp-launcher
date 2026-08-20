@@ -56,12 +56,16 @@ struct Config: Equatable {
     static let defaultAerospacePath = "/opt/homebrew/bin/aerospace"
 
     /// Rules that apply before the user's `[defaults]`, for apps where the
-    /// compiled-in `open` trigger is actively harmful. `open -n` on Finder starts
-    /// a second Finder process; Finder is scriptable, so ask it instead.
+    /// compiled-in `open` trigger is known not to work. `open -n` on Finder starts
+    /// a second Finder process; Finder is scriptable, so ask it instead. Zed is
+    /// single-instance and silently ignores a second-instance request, but its CLI
+    /// opens a window; if `zed` is not on PATH the trigger fails visibly and the
+    /// existing window is focused instead.
     static let builtInApps: [String: AppPolicy] = [
         "com.apple.finder": AppPolicy(
             newWindow: .appleScript("tell application \"Finder\" to make new Finder window")
         ),
+        "dev.zed.Zed": AppPolicy(newWindow: .command(["zed", "-n"])),
     ]
     static let builtInDefaults = AppPolicy(follow: false, newWindow: .open, hotkey: nil, aliases: [])
 

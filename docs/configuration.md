@@ -43,7 +43,7 @@ new_window = { applescript = 'tell application "Safari" to make new document' }
 
 Under `[apps."<bundle-id>"]`, and — except `hotkey` — under `[defaults]`, which
 applies to every app without an entry of its own. Resolution order: the app's
-entry, then the built-in rules (Finder), then `[defaults]`, then compiled-in
+entry, then the built-in rules (Finder, Zed), then `[defaults]`, then compiled-in
 defaults (`follow = false`, `new_window = "open"`).
 
 - `follow` — `true` to move the existing window here instead of opening a new one.

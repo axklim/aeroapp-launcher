@@ -115,7 +115,6 @@ final class Summoner {
     private func openNewWindow(
         of app: InstalledApp, trigger: NewWindowTrigger, existing: [AeroWindow], aerospace: AeroSpaceCLI
     ) {
-        let before = Set(existing.map(\.windowId))
         // The status-quo fallback when a trigger cannot run: focus what exists,
         // workspace jump and all. Visible and predictable beats a silent no-op.
         func giveUp(_ reason: String) {
@@ -147,23 +146,34 @@ final class Summoner {
             }
         }
 
-        focusNewWindow(of: app, notIn: before, aerospace: aerospace)
+        focusNewWindow(of: app, existing: existing, aerospace: aerospace)
     }
 
-    /// Waits for a window of `app` on the focused workspace that was not there
-    /// before, and focuses it. Needed because none of the triggers reliably focus
-    /// what they create — `open -g` by design, the others by app whim.
-    private func focusNewWindow(of app: InstalledApp, notIn before: Set<Int>, aerospace: AeroSpaceCLI) {
+    /// Waits for a window of `app` that was not there before, and focuses it —
+    /// none of the triggers reliably focus what they create: `open -g` by design,
+    /// the others by app whim. All workspaces are watched, not just the focused
+    /// one: some apps open the window on the workspace they already live on, and
+    /// it still has to end up here. When nothing appears — a single-instance app
+    /// silently ignoring `open -n`, say — the existing window is focused instead,
+    /// the way the Dock would have.
+    private func focusNewWindow(of app: InstalledApp, existing: [AeroWindow], aerospace: AeroSpaceCLI) {
+        let before = Set(existing.map(\.windowId))
         let deadline = Date().addingTimeInterval(newWindowTimeout)
         while Date() < deadline {
             Thread.sleep(forTimeInterval: 0.1)
-            guard let here = aerospace.windows(ofBundleId: app.bundleId, scope: .focusedWorkspace) else { return }
-            if let fresh = here.first(where: { !before.contains($0.windowId) }) {
-                aerospace.focus(windowId: fresh.windowId)
-                return
+            guard let windows = aerospace.windows(ofBundleId: app.bundleId, scope: .everywhere) else { return }
+            guard let fresh = windows.first(where: { !before.contains($0.windowId) }) else { continue }
+            if !fresh.workspaceIsFocused {
+                log("\(app.name): new window \(fresh.windowId) appeared on workspace \(fresh.workspace); moving it here")
+                if let workspace = aerospace.focusedWorkspace() {
+                    aerospace.move(windowId: fresh.windowId, toWorkspace: workspace)
+                }
             }
+            aerospace.focus(windowId: fresh.windowId)
+            return
         }
-        log("\(app.name): no new window appeared within \(Int(newWindowTimeout))s")
+        log("\(app.name): no new window appeared within \(Int(newWindowTimeout))s; focusing the existing window instead")
+        aerospace.focus(windowId: existing[0].windowId)
     }
 
     // MARK: Triggers
